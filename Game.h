@@ -57,6 +57,27 @@ private:
 	Maze maze;
 };
 
+// -------------------------------------------------------
+
+enum class GameCommand {
+	NORTH,
+	EAST,
+	SOUTH,
+	WEST,
+	GET,
+	DROP,
+	OPEN,
+	EAT,
+	FIGHT,
+	MAP,
+	EXIT
+};
+
+struct GameOperation {
+	GameCommand command;
+	Object object;
+};
+
 class GameView : public Observer {
 public:
 	GameView(GameModel* model);
@@ -73,30 +94,23 @@ public:
 	void displayMaze() const;
 
 	std::uint32_t getRoomsCount() const;
-
-	std::string getCommand() const;
-	Object getObject() const;
+	GameOperation getOperation() const;
 
 	~GameView();
 
 private:
 	void clearCommandsList();
 
-	static std::string toLower(std::string str);
-	static std::string removeSpaces(std::string str);
-
-	static std::string dirToString(CellDirection direction);
-
 private:
 	std::uint32_t rooms_count;
+	GameOperation operation;
 
-	std::string command;
-	Object object;
-	
-	std::vector<Object> commands_list;
+	std::vector<GameOperation> operations_list;
 
 	GameModel* model;
 };
+
+// --------------------------------------------------------
 
 class GameController {
 public:

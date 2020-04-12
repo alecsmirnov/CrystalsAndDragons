@@ -7,9 +7,11 @@ enum class ObjectType {
 	ITEM,
 	WEAPON,
 	TORCH,
+	KEY,
 	CHEST,
 	FOOD,
 	MONSTER,
+	DIRECTION,
 	NONE
 };
 

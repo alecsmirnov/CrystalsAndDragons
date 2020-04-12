@@ -46,13 +46,7 @@ void Cell::setType(CellType type) {
 }
 
 CellType Cell::getType() const {
-	bool torch = false;
-
-	for (auto obj = objects.begin(); obj != objects.end() && !torch; ++obj)
-		if (obj->type == ObjectType::TORCH)
-			torch = true;
-
-	return torch ? CellType::LIGHT : type;
+	return type;
 }
 
 void Cell::pushObject(Object object) {
@@ -60,7 +54,7 @@ void Cell::pushObject(Object object) {
 }
 
 Object Cell::peekObject(Object object) {
-	Object peek_object = {"", ObjectType::NONE};
+	Object peek_object;
 
 	auto peek_object_pos = std::find(objects.begin(), objects.end(), object);
 
