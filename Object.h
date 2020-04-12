@@ -12,12 +12,13 @@ enum class ObjectType {
 	FOOD,
 	MONSTER,
 	DIRECTION,
-	NONE
+	NONE,
+	EMPTY
 };
 
 struct Object {
 	std::string name;
-	ObjectType type;
+	ObjectType type = ObjectType::EMPTY;
 };
 
 static inline bool operator==(const Object &lhs, const Object &rhs) {

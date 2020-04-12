@@ -1,15 +1,9 @@
 #include "Game.h"
 
 int main(int argc, char* argv[]) {
-	GameModel*      model      = new GameModel();
-	GameView*       view       = new GameView(model);
-	GameController* controller = new GameController(model, view);
+	Game game;
 
-	controller->start();
-
-	delete model;
-	delete view;
-	delete controller;
+	game.start();
 
 	return 0;
 }
