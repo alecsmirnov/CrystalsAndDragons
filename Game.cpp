@@ -34,12 +34,14 @@ void GameModel::initMaze(std::uint16_t width, std::uint16_t height) {
 	rand_x = rand(0, maze.getWidth() - 1);
 	rand_y = rand(0, maze.getHeight() - 1);
 
-	maze.pushCellObject(rand_x, rand_y, {"kobylianskiy", ObjectType::MONSTER});
+	maze.pushCellObject(rand_x, rand_y, {"lurker", ObjectType::MONSTER});
 
+	// --------------------
 	rand_x = rand(0, maze.getWidth() - 1);
 	rand_y = rand(0, maze.getHeight() - 1);
 
 	maze.setCellType(rand_x, rand_y, CellType::DARK);
+	// --------------------
 
 	rand_x = rand(0, maze.getWidth() - 1);
 	rand_y = rand(0, maze.getHeight() - 1);
@@ -203,36 +205,39 @@ void GameView::update() {
 
 	auto hero_items = model->getHeroItems();
 	bool armed = false;
+	bool hero_torch = false;
 
 	if (!hero_items.empty())
 		for (auto item : hero_items)
 			switch (item.type) {
 				case ObjectType::WEAPON: armed = true;
 				case ObjectType::ITEM:
-				case ObjectType::TORCH:  
-				case ObjectType::KEY:    operations_list.push_back({GameCommand::DROP, item}); break;
+				case ObjectType::KEY:    operations_list.push_back({GameCommand::DROP, item});					  break;
+				case ObjectType::TORCH:  operations_list.push_back({GameCommand::DROP, item}); hero_torch = true; break;
 				case ObjectType::FOOD:   operations_list.push_back({GameCommand::EAT,  item});
-									     operations_list.push_back({GameCommand::DROP, item}); break;
+									     operations_list.push_back({GameCommand::DROP, item});					  break;
 			}
 
 	auto room_objects = model->getRoomObjects();
 	bool items_exist = false;
+	bool room_torch = false;
 
 	if (!room_objects.empty())
 		for (auto obj : room_objects)
 			switch (obj.type) {
+				case ObjectType::TORCH:	  room_torch = true;
 				case ObjectType::ITEM:
 				case ObjectType::WEAPON:
-				case ObjectType::TORCH:	
 				case ObjectType::KEY:     operations_list.push_back({GameCommand::GET,  obj}); items_exist = true; break;
 				case ObjectType::CHEST:   operations_list.push_back({GameCommand::OPEN, obj}); items_exist = true; break;
 				case ObjectType::FOOD:	  operations_list.push_back({GameCommand::EAT,  obj});  
 										  operations_list.push_back({GameCommand::GET,  obj}); items_exist = true; break;
-				case ObjectType::MONSTER: if (armed) operations_list.push_back({GameCommand::FIGHT, obj});         break;
+				case ObjectType::MONSTER: if (armed) operations_list.push_back({GameCommand::FIGHT, obj});		   break;
 			}
 
 	auto room_type = model->getRoomType();
-	if (room_type == CellType::LIGHT)
+
+	if (room_type == CellType::LIGHT || hero_torch || room_torch)
 		std::cout << "You are in the room [" << x << ", " << y << "]. ";
 	else
 		std::cout << "Can't see anything in this dark place! ";
@@ -248,21 +253,23 @@ void GameView::update() {
 		else 
 			std::cout << op_it->object.name << "." << std::endl;
 
-	if (!hero_items.empty()) {
-		std::cout << "Your items:" << std::endl;
+	if (room_type == CellType::LIGHT || hero_torch || room_torch) {
+		if (!hero_items.empty()) {
+			std::cout << "Your items:" << std::endl;
 
-		for (auto op : operations_list)
-			if (op.command == GameCommand::DROP || op.command == GameCommand::EAT)
-				std::cout << " - " << op.object.name << std::endl;
-	}
+			for (auto op : operations_list)
+				if (op.command == GameCommand::DROP || op.command == GameCommand::EAT)
+					std::cout << " - " << op.object.name << std::endl;
+		}
 
-	if (items_exist) {
-		std::cout << "Items in the room:" << std::endl;
+		if (items_exist) {
+			std::cout << "Items in the room:" << std::endl;
 
-		for (auto op : operations_list)
-			if (op.command == GameCommand::GET || op.command == GameCommand::OPEN ||
-				op.command == GameCommand::EAT)
-				std::cout << " - " << op.object.name << std::endl;
+			for (auto op : operations_list)
+				if (op.command == GameCommand::GET || op.command == GameCommand::OPEN ||
+					op.command == GameCommand::EAT)
+					std::cout << " - " << op.object.name << std::endl;
+		}
 	}
 
 	operations_list.push_back({GameCommand::MAP,  {"map",  ObjectType::NONE}});
@@ -399,13 +406,20 @@ void GameController::start() {
 	view->init();
 
 	std::uint32_t rooms_count = view->getRoomsCount();
-	std::uint16_t width  = static_cast<std::uint16_t>(std::sqrt(rooms_count));
-	std::uint16_t height = width;
+
+	std::vector<std::pair<std::uint16_t, std::uint16_t>> factors;
+
+	for (std::uint32_t i = 1; i <= rooms_count; ++i)
+		if (rooms_count % i == 0)
+			factors.push_back({i, rooms_count / i});
+
+	std::uint16_t width  = factors[factors.size() / 2].first;
+	std::uint16_t height = factors[factors.size() / 2].second;
 
 	std::uint16_t rand_x = rand(0, width - 1);
 	std::uint16_t rand_y = rand(0, height - 1);
 
-	model->initHero(rand_x, rand_y, rooms_count + rooms_count / 2);
+	model->initHero(rand_x, rand_y, rooms_count * 2);
 	model->initMaze(width, height);
 	view->update();
 
