@@ -1,4 +1,4 @@
-#include "Hero.h"
+п»ї#include "Hero.h"
 
 Hero::Hero(): x(0), y(0), health(0) {}
 
@@ -9,50 +9,50 @@ Hero::Hero(std::uint16_t x, std::uint16_t y, double health) {
 	this->health = health;
 }
 
-// Задать положение Героя по оси х
+// Р—Р°РґР°С‚СЊ РїРѕР»РѕР¶РµРЅРёРµ Р“РµСЂРѕСЏ РїРѕ РѕСЃРё С…
 void Hero::setX(std::uint16_t x) {
 	this->x = x;
 }
 
-// Получить положение Героя по оси х
+// РџРѕР»СѓС‡РёС‚СЊ РїРѕР»РѕР¶РµРЅРёРµ Р“РµСЂРѕСЏ РїРѕ РѕСЃРё С…
 std::uint16_t Hero::getX() const {
 	return x;
 }
 
-// Задать положение Героя по оси y
+// Р—Р°РґР°С‚СЊ РїРѕР»РѕР¶РµРЅРёРµ Р“РµСЂРѕСЏ РїРѕ РѕСЃРё y
 void Hero::setY(std::uint16_t y) {
 	this->y = y;
 }
 
-// Получить положение Героя по оси y
+// РџРѕР»СѓС‡РёС‚СЊ РїРѕР»РѕР¶РµРЅРёРµ Р“РµСЂРѕСЏ РїРѕ РѕСЃРё y
 std::uint16_t Hero::getY() const {
 	return y;
 }
 
-// Задать здоровье Героя
+// Р—Р°РґР°С‚СЊ Р·РґРѕСЂРѕРІСЊРµ Р“РµСЂРѕСЏ
 void Hero::setHelth(double health) {
 	this->health = health;
 }
 
-// Получить здоровье Героя
+// РџРѕР»СѓС‡РёС‚СЊ Р·РґРѕСЂРѕРІСЊРµ Р“РµСЂРѕСЏ
 double Hero::getHealth() const {
 	return health;
 }
 
-// Положить предмет в инвентарь
+// РџРѕР»РѕР¶РёС‚СЊ РїСЂРµРґРјРµС‚ РІ РёРЅРІРµРЅС‚Р°СЂСЊ
 void Hero::pickupItem(Object item) {
 	items.push_back(item);
 }
 
-// Выкинуть предмет из инвентаря
+// Р’С‹РєРёРЅСѓС‚СЊ РїСЂРµРґРјРµС‚ РёР· РёРЅРІРµРЅС‚Р°СЂСЏ
 Object Hero::dropItem(Object item) {
 	Object drop_item;
 
-	// Поиск указанного предмета
+	// РџРѕРёСЃРє СѓРєР°Р·Р°РЅРЅРѕРіРѕ РїСЂРµРґРјРµС‚Р°
 	auto drop_item_pos = std::find(items.begin(), items.end(), item);
 
 	if (drop_item_pos != items.end()) {
-		// Если предмет найден -- выкидываем из инвентаря
+		// Р•СЃР»Рё РїСЂРµРґРјРµС‚ РЅР°Р№РґРµРЅ -- РІС‹РєРёРґС‹РІР°РµРј РёР· РёРЅРІРµРЅС‚Р°СЂСЏ
 		items.erase(drop_item_pos);
 		drop_item = item;
 	}
@@ -60,12 +60,12 @@ Object Hero::dropItem(Object item) {
 	return drop_item;
 }
 
-// Задать инвентарь Героя
+// Р—Р°РґР°С‚СЊ РёРЅРІРµРЅС‚Р°СЂСЊ Р“РµСЂРѕСЏ
 void Hero::setItems(const std::vector<Object>& items) {
 	this->items = items;
 }
 
-// Получить инвентарь Героя
+// РџРѕР»СѓС‡РёС‚СЊ РёРЅРІРµРЅС‚Р°СЂСЊ Р“РµСЂРѕСЏ
 std::vector<Object> Hero::getItems() const {
 	return items;
 }

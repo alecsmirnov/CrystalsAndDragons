@@ -1,4 +1,4 @@
-#include "GameController.h"
+﻿#include "GameController.h"
 
 int main(int argc, char* argv[]) {
 	GameModel* model = new GameModel();

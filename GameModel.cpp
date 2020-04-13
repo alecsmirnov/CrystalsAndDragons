@@ -1,44 +1,44 @@
-#include "GameModel.h"
+п»ї#include "GameModel.h"
 
 #include <cmath>
 #include <string>
 #include <array>
 
-// Минимально-допустимое количество комнат в лабиринте
+// РњРёРЅРёРјР°Р»СЊРЅРѕ-РґРѕРїСѓСЃС‚РёРјРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РєРѕРјРЅР°С‚ РІ Р»Р°Р±РёСЂРёРЅС‚Рµ
 static constexpr std::uint32_t ROOMS_MIN = 2;
 
-// Время ожидания ответа в случае встречи с монстром
+// Р’СЂРµРјСЏ РѕР¶РёРґР°РЅРёСЏ РѕС‚РІРµС‚Р° РІ СЃР»СѓС‡Р°Рµ РІСЃС‚СЂРµС‡Рё СЃ РјРѕРЅСЃС‚СЂРѕРј
 static constexpr std::uint64_t WAIT_TIME_SEC = 5;
 
-// Параметры влияния на здоровье Героя
-static constexpr double HEALTH_INIT_PERCENT = 2.8;		// Инициализация начального здоровья Героя от кол-ва комнат
-static constexpr double HEALTH_PENALTY		= 1;		// Величина уменьшения здоровья при перемещении
-static constexpr double HEALTH_LOSE_PERCENT = 0.9;		// Процент уменьшение здоровья при атаках монстра
-static constexpr double HEALTH_LIFT_PERCENT = 1.1;		// Процент увеличения здоровья после приёма пищи
+// РџР°СЂР°РјРµС‚СЂС‹ РІР»РёСЏРЅРёСЏ РЅР° Р·РґРѕСЂРѕРІСЊРµ Р“РµСЂРѕСЏ
+static constexpr double HEALTH_INIT_PERCENT = 2.8;		// РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РЅР°С‡Р°Р»СЊРЅРѕРіРѕ Р·РґРѕСЂРѕРІСЊСЏ Р“РµСЂРѕСЏ РѕС‚ РєРѕР»-РІР° РєРѕРјРЅР°С‚
+static constexpr double HEALTH_PENALTY		= 1;		// Р’РµР»РёС‡РёРЅР° СѓРјРµРЅСЊС€РµРЅРёСЏ Р·РґРѕСЂРѕРІСЊСЏ РїСЂРё РїРµСЂРµРјРµС‰РµРЅРёРё
+static constexpr double HEALTH_LOSE_PERCENT = 0.9;		// РџСЂРѕС†РµРЅС‚ СѓРјРµРЅСЊС€РµРЅРёРµ Р·РґРѕСЂРѕРІСЊСЏ РїСЂРё Р°С‚Р°РєР°С… РјРѕРЅСЃС‚СЂР°
+static constexpr double HEALTH_LIFT_PERCENT = 1.1;		// РџСЂРѕС†РµРЅС‚ СѓРІРµР»РёС‡РµРЅРёСЏ Р·РґРѕСЂРѕРІСЊСЏ РїРѕСЃР»Рµ РїСЂРёС‘РјР° РїРёС‰Рё
 
-// Процент количество еды на количество комнат лабиринта
+// РџСЂРѕС†РµРЅС‚ РєРѕР»РёС‡РµСЃС‚РІРѕ РµРґС‹ РЅР° РєРѕР»РёС‡РµСЃС‚РІРѕ РєРѕРјРЅР°С‚ Р»Р°Р±РёСЂРёРЅС‚Р°
 static constexpr double FOOD_PERCENT = 0.5;
 
-// Процент количества монстров на количество комнат лабиринта
+// РџСЂРѕС†РµРЅС‚ РєРѕР»РёС‡РµСЃС‚РІР° РјРѕРЅСЃС‚СЂРѕРІ РЅР° РєРѕР»РёС‡РµСЃС‚РІРѕ РєРѕРјРЅР°С‚ Р»Р°Р±РёСЂРёРЅС‚Р°
 static constexpr double MONSTERS_PERCENT   = 0.2;
-// Процент количества тёмных комнат на количество комнат лабиринта
+// РџСЂРѕС†РµРЅС‚ РєРѕР»РёС‡РµСЃС‚РІР° С‚С‘РјРЅС‹С… РєРѕРјРЅР°С‚ РЅР° РєРѕР»РёС‡РµСЃС‚РІРѕ РєРѕРјРЅР°С‚ Р»Р°Р±РёСЂРёРЅС‚Р°
 static constexpr double DARK_ROOMS_PERCENT = 0.2;
 
-// Процент количества золота на количество комнат лабиринта
+// РџСЂРѕС†РµРЅС‚ РєРѕР»РёС‡РµСЃС‚РІР° Р·РѕР»РѕС‚Р° РЅР° РєРѕР»РёС‡РµСЃС‚РІРѕ РєРѕРјРЅР°С‚ Р»Р°Р±РёСЂРёРЅС‚Р°
 static constexpr double        GOLD_PERCENT		= 0.5;
-// Размер максимально-возможной найденной кучки золота
+// Р Р°Р·РјРµСЂ РјР°РєСЃРёРјР°Р»СЊРЅРѕ-РІРѕР·РјРѕР¶РЅРѕР№ РЅР°Р№РґРµРЅРЅРѕР№ РєСѓС‡РєРё Р·РѕР»РѕС‚Р°
 static constexpr std::uint16_t GOLD_PORTION_MAX = 100;
 
-// Инициализация данных (Кол-во комнат, положение игровых обектов, ...)
+// РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РґР°РЅРЅС‹С… (РљРѕР»-РІРѕ РєРѕРјРЅР°С‚, РїРѕР»РѕР¶РµРЅРёРµ РёРіСЂРѕРІС‹С… РѕР±РµРєС‚РѕРІ, ...)
 void GameModel::initModel(std::uint32_t rooms_count) {
 	Pair maze_size = {1, 1};
 
-	// Получение ширины и высоты лабиринта по кол-ву комнат
+	// РџРѕР»СѓС‡РµРЅРёРµ С€РёСЂРёРЅС‹ Рё РІС‹СЃРѕС‚С‹ Р»Р°Р±РёСЂРёРЅС‚Р° РїРѕ РєРѕР»-РІСѓ РєРѕРјРЅР°С‚
 	getMazeSize(rooms_count, maze_size.x, maze_size.y);
 	maze.init(maze_size.x, maze_size.y);
 	maze.generate();
 
-	// Определение положения Героя
+	// РћРїСЂРµРґРµР»РµРЅРёРµ РїРѕР»РѕР¶РµРЅРёСЏ Р“РµСЂРѕСЏ
 	Pair hero_pos = {rand(0, maze_size.x - 1), rand(0, maze_size.y - 1)};
 	hero.setX(hero_pos.x);
 	hero.setY(hero_pos.y);
@@ -46,7 +46,7 @@ void GameModel::initModel(std::uint32_t rooms_count) {
 	auto hero_init_health = std::round(rooms_count * HEALTH_INIT_PERCENT);
 	hero.setHelth(hero_init_health);
 
-	// Определение положения ключа
+	// РћРїСЂРµРґРµР»РµРЅРёРµ РїРѕР»РѕР¶РµРЅРёСЏ РєР»СЋС‡Р°
 	Pair key_pos = {0, 0};
 	do {
 		key_pos = {rand(0, maze_size.x - 1), rand(0, maze_size.y - 1)};
@@ -55,7 +55,7 @@ void GameModel::initModel(std::uint32_t rooms_count) {
 	key_position = key_pos;
 	maze.pushCellObject(key_pos.x, key_pos.y, {"key", ObjectType::KEY});
 
-	// Определение положения сундука. Сундук и ключ не должны находиться в одной комнате
+	// РћРїСЂРµРґРµР»РµРЅРёРµ РїРѕР»РѕР¶РµРЅРёСЏ СЃСѓРЅРґСѓРєР°. РЎСѓРЅРґСѓРє Рё РєР»СЋС‡ РЅРµ РґРѕР»Р¶РЅС‹ РЅР°С…РѕРґРёС‚СЊСЃСЏ РІ РѕРґРЅРѕР№ РєРѕРјРЅР°С‚Рµ
 	Pair chest_pos = {0, 0};
 	do {
 		chest_pos = {rand(0, maze_size.x - 1), rand(0, maze_size.y - 1)};
@@ -64,7 +64,7 @@ void GameModel::initModel(std::uint32_t rooms_count) {
 	chest_position = chest_pos;
 	maze.pushCellObject(chest_pos.x, chest_pos.y, {"chest", ObjectType::CHEST});
 
-	// Определение кол-ва монстров и их положений. Монстры не спаунятся в точке спауна Героя
+	// РћРїСЂРµРґРµР»РµРЅРёРµ РєРѕР»-РІР° РјРѕРЅСЃС‚СЂРѕРІ Рё РёС… РїРѕР»РѕР¶РµРЅРёР№. РњРѕРЅСЃС‚СЂС‹ РЅРµ СЃРїР°СѓРЅСЏС‚СЃСЏ РІ С‚РѕС‡РєРµ СЃРїР°СѓРЅР° Р“РµСЂРѕСЏ
 	auto monsters_count = static_cast<std::uint32_t>(std::round(rooms_count * MONSTERS_PERCENT));
 	for (std::uint32_t i = 0; i != monsters_count; ++i) {
 		Pair monster_pos = {0, 0};
@@ -75,7 +75,7 @@ void GameModel::initModel(std::uint32_t rooms_count) {
 		maze.pushCellObject(monster_pos.x, monster_pos.y, {"lurker", ObjectType::MONSTER});
 	}
 
-	// Определение кол-ва тёмных комнат и их положений
+	// РћРїСЂРµРґРµР»РµРЅРёРµ РєРѕР»-РІР° С‚С‘РјРЅС‹С… РєРѕРјРЅР°С‚ Рё РёС… РїРѕР»РѕР¶РµРЅРёР№
 	Pair prev_dark_room = {0, 0};
 	auto dark_rooms_count = static_cast<std::uint32_t>(std::round(rooms_count * DARK_ROOMS_PERCENT));
 	for (std::uint32_t i = 0; i != dark_rooms_count; ++i) {
@@ -89,16 +89,16 @@ void GameModel::initModel(std::uint32_t rooms_count) {
 		prev_dark_room = dark_room;
 	}
 
-	// Определение положения фаекла и меча
+	// РћРїСЂРµРґРµР»РµРЅРёРµ РїРѕР»РѕР¶РµРЅРёСЏ С„Р°РµРєР»Р° Рё РјРµС‡Р°
 	maze.pushCellObject(rand(0, maze_size.x - 1), rand(0, maze_size.y - 1), {"torchlight", ObjectType::TORCH});
 	maze.pushCellObject(rand(0, maze_size.x - 1), rand(0, maze_size.y - 1), {"sword",	   ObjectType::WEAPON});
 
-	// Определение кол-ва еды и её положения
+	// РћРїСЂРµРґРµР»РµРЅРёРµ РєРѕР»-РІР° РµРґС‹ Рё РµС‘ РїРѕР»РѕР¶РµРЅРёСЏ
 	auto food_count = static_cast<std::uint32_t>(std::round(rooms_count * FOOD_PERCENT));
 	for (std::uint32_t i = 0; i != food_count; ++i)
 		maze.pushCellObject(rand(0, maze_size.x - 1), rand(0, maze_size.y - 1), {"fried chicken", ObjectType::FOOD});
 
-	// Определение кол-ва золота и его размера
+	// РћРїСЂРµРґРµР»РµРЅРёРµ РєРѕР»-РІР° Р·РѕР»РѕС‚Р° Рё РµРіРѕ СЂР°Р·РјРµСЂР°
 	auto gold_chunks_count = static_cast<std::uint32_t>(std::round(rooms_count * GOLD_PERCENT));
 	for (std::uint32_t i = 0; i != gold_chunks_count; ++i) {
 		auto gold_portion = rand(0, GOLD_PORTION_MAX - 1);
@@ -106,88 +106,88 @@ void GameModel::initModel(std::uint32_t rooms_count) {
 	}
 }
 
-// Добавить игровой объект в лабиринт
+// Р”РѕР±Р°РІРёС‚СЊ РёРіСЂРѕРІРѕР№ РѕР±СЉРµРєС‚ РІ Р»Р°Р±РёСЂРёРЅС‚
 void GameModel::addRoomObject(std::uint16_t x, std::uint16_t y, Object item) {
 	maze.pushCellObject(x, y, item);
 }
 
-// Задать положение Героя по оси х
+// Р—Р°РґР°С‚СЊ РїРѕР»РѕР¶РµРЅРёРµ Р“РµСЂРѕСЏ РїРѕ РѕСЃРё С…
 void GameModel::setHeroX(std::uint16_t x) {
-	// Получение предыдущей комнаты по двум координамт
+	// РџРѕР»СѓС‡РµРЅРёРµ РїСЂРµРґС‹РґСѓС‰РµР№ РєРѕРјРЅР°С‚С‹ РїРѕ РґРІСѓРј РєРѕРѕСЂРґРёРЅР°РјС‚
 	previos_room = getDirection(x, hero.getY(), hero.getX(), hero.getY());
 
 	hero.setX(x);
 }
 
-// Получить положение Героя по оси х
+// РџРѕР»СѓС‡РёС‚СЊ РїРѕР»РѕР¶РµРЅРёРµ Р“РµСЂРѕСЏ РїРѕ РѕСЃРё С…
 std::uint16_t GameModel::getHeroX() const {
 	return hero.getX();
 }
 
-// Задать положение Героя по оси y
+// Р—Р°РґР°С‚СЊ РїРѕР»РѕР¶РµРЅРёРµ Р“РµСЂРѕСЏ РїРѕ РѕСЃРё y
 void GameModel::setHeroY(std::uint16_t y) {
-	// Получение предыдущей комнаты по двум координамт
+	// РџРѕР»СѓС‡РµРЅРёРµ РїСЂРµРґС‹РґСѓС‰РµР№ РєРѕРјРЅР°С‚С‹ РїРѕ РґРІСѓРј РєРѕРѕСЂРґРёРЅР°РјС‚
 	previos_room = getDirection(hero.getX(), y, hero.getX(), hero.getY());
 
 	hero.setY(y);
 }
 
-// Получить положение Героя по оси y
+// РџРѕР»СѓС‡РёС‚СЊ РїРѕР»РѕР¶РµРЅРёРµ Р“РµСЂРѕСЏ РїРѕ РѕСЃРё y
 std::uint16_t GameModel::getHeroY() const {
 	return hero.getY();
 }
 
-// Задать здоровье Героя
+// Р—Р°РґР°С‚СЊ Р·РґРѕСЂРѕРІСЊРµ Р“РµСЂРѕСЏ
 void GameModel::setHeroHealth(double health) {
 	hero.setHelth(health);
 }
 
-// Получить здоровье Героя
+// РџРѕР»СѓС‡РёС‚СЊ Р·РґРѕСЂРѕРІСЊРµ Р“РµСЂРѕСЏ
 double GameModel::getHeroHealth() const {
 	return hero.getHealth();
 }
 
-// Задать инвентарь Героя
+// Р—Р°РґР°С‚СЊ РёРЅРІРµРЅС‚Р°СЂСЊ Р“РµСЂРѕСЏ
 void GameModel::setHeroItems(const std::vector<Object>& items) {
 	hero.setItems(items);
 }
 
-// Получить инвентарь Героя
+// РџРѕР»СѓС‡РёС‚СЊ РёРЅРІРµРЅС‚Р°СЂСЊ Р“РµСЂРѕСЏ
 std::vector<Object> GameModel::getHeroItems() const {
 	return hero.getItems();
 }
 
-// Положить предмет в инвентарь Героя
+// РџРѕР»РѕР¶РёС‚СЊ РїСЂРµРґРјРµС‚ РІ РёРЅРІРµРЅС‚Р°СЂСЊ Р“РµСЂРѕСЏ
 void GameModel::pickupHeroItem(Object item) {
 	item.type == ObjectType::GOLD ? pickupHeroGold(item) : hero.pickupItem(item);
 }
 
-// Выкинуть предмет из инвентаря Героя
+// Р’С‹РєРёРЅСѓС‚СЊ РїСЂРµРґРјРµС‚ РёР· РёРЅРІРµРЅС‚Р°СЂСЏ Р“РµСЂРѕСЏ
 Object GameModel::dropHeroItem(Object item) {
 	return hero.dropItem(item);
 }
 
-// Получить все объекты в комнате
+// РџРѕР»СѓС‡РёС‚СЊ РІСЃРµ РѕР±СЉРµРєС‚С‹ РІ РєРѕРјРЅР°С‚Рµ
 std::vector<Object> GameModel::getRoomObjects() const {
 	return maze.getCellObjects(hero.getX(), hero.getY());
 }
 
-// Положить объект в комнату
+// РџРѕР»РѕР¶РёС‚СЊ РѕР±СЉРµРєС‚ РІ РєРѕРјРЅР°С‚Сѓ
 void GameModel::pushRoomObject(Object item) {
 	maze.pushCellObject(hero.getX(), hero.getY(), item);
 }
 
-// Взять объект из комнаты
+// Р’Р·СЏС‚СЊ РѕР±СЉРµРєС‚ РёР· РєРѕРјРЅР°С‚С‹
 Object GameModel::peekRoomObject(Object item) {
 	return maze.peekCellObject(hero.getX(), hero.getY(), item);
 }
 
-// Получить список всех дверей комнаты
+// РџРѕР»СѓС‡РёС‚СЊ СЃРїРёСЃРѕРє РІСЃРµС… РґРІРµСЂРµР№ РєРѕРјРЅР°С‚С‹
 std::vector<CellDirection> GameModel::getRoomDoors() const {
 	std::vector<CellDirection> room_doors;
 
-	// Т.к. перечисления имеют заданные значения, не позволяющие перемещаться по ним в обычном виде,
-	// используем массив с перечислениями и проходимся по нему
+	// Рў.Рє. РїРµСЂРµС‡РёСЃР»РµРЅРёСЏ РёРјРµСЋС‚ Р·Р°РґР°РЅРЅС‹Рµ Р·РЅР°С‡РµРЅРёСЏ, РЅРµ РїРѕР·РІРѕР»СЏСЋС‰РёРµ РїРµСЂРµРјРµС‰Р°С‚СЊСЃСЏ РїРѕ РЅРёРј РІ РѕР±С‹С‡РЅРѕРј РІРёРґРµ,
+	// РёСЃРїРѕР»СЊР·СѓРµРј РјР°СЃСЃРёРІ СЃ РїРµСЂРµС‡РёСЃР»РµРЅРёСЏРјРё Рё РїСЂРѕС…РѕРґРёРјСЃСЏ РїРѕ РЅРµРјСѓ
 	std::array<CellDirection, static_cast<std::uint8_t>(CellDirection::SIZE)> all_directions = {
 		CellDirection::NORTH, CellDirection::EAST, CellDirection::SOUTH, CellDirection::WEST
 	};
@@ -199,84 +199,84 @@ std::vector<CellDirection> GameModel::getRoomDoors() const {
 	return room_doors;
 }
 
-// Получить тип комнаты (светлая, тёмная)
+// РџРѕР»СѓС‡РёС‚СЊ С‚РёРї РєРѕРјРЅР°С‚С‹ (СЃРІРµС‚Р»Р°СЏ, С‚С‘РјРЅР°СЏ)
 CellType GameModel::getRoomType() const {
 	return maze.getCellType(hero.getX(), hero.getY());
 }
 
-// Получить любую комнату по координам
+// РџРѕР»СѓС‡РёС‚СЊ Р»СЋР±СѓСЋ РєРѕРјРЅР°С‚Сѓ РїРѕ РєРѕРѕСЂРґРёРЅР°Рј
 Cell GameModel::getRoom(std::uint16_t x, std::uint16_t y) const {
 	return maze.getCell(x, y);
 }
 
-// Получить предыдущую комнату в которой был Герой
+// РџРѕР»СѓС‡РёС‚СЊ РїСЂРµРґС‹РґСѓС‰СѓСЋ РєРѕРјРЅР°С‚Сѓ РІ РєРѕС‚РѕСЂРѕР№ Р±С‹Р» Р“РµСЂРѕР№
 CellDirection GameModel::getPreviosRoom() const {
 	return previos_room;
 }
 
-// Получить позицию ключа по оси х
+// РџРѕР»СѓС‡РёС‚СЊ РїРѕР·РёС†РёСЋ РєР»СЋС‡Р° РїРѕ РѕСЃРё С…
 std::uint16_t GameModel::getKeyX() const {
 	return key_position.x;
 }
 
-// Получить позицию ключа по оси y
+// РџРѕР»СѓС‡РёС‚СЊ РїРѕР·РёС†РёСЋ РєР»СЋС‡Р° РїРѕ РѕСЃРё y
 std::uint16_t GameModel::getKeyY() const {
 	return key_position.y;
 }
 
-// Получить позицию сундука по оси х
+// РџРѕР»СѓС‡РёС‚СЊ РїРѕР·РёС†РёСЋ СЃСѓРЅРґСѓРєР° РїРѕ РѕСЃРё С…
 std::uint16_t GameModel::getChestX() const {
 	return chest_position.x;
 }
 
-// Получить позицию сундука по оси y
+// РџРѕР»СѓС‡РёС‚СЊ РїРѕР·РёС†РёСЋ СЃСѓРЅРґСѓРєР° РїРѕ РѕСЃРё y
 std::uint16_t GameModel::getChestY() const {
 	return chest_position.y;
 }
 
-// Получить ширину лабиринта
+// РџРѕР»СѓС‡РёС‚СЊ С€РёСЂРёРЅСѓ Р»Р°Р±РёСЂРёРЅС‚Р°
 std::uint16_t GameModel::getMazeWidth() const {
 	return maze.getWidth();
 }
 
-// Получить высоту лабиринта
+// РџРѕР»СѓС‡РёС‚СЊ РІС‹СЃРѕС‚Сѓ Р»Р°Р±РёСЂРёРЅС‚Р°
 std::uint16_t GameModel::getMazeHeight() const {
 	return maze.getHeight();
 }
 
-// Получить минимально-возможное количество комнат
+// РџРѕР»СѓС‡РёС‚СЊ РјРёРЅРёРјР°Р»СЊРЅРѕ-РІРѕР·РјРѕР¶РЅРѕРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РєРѕРјРЅР°С‚
 std::uint32_t GameModel::getRoomsMin() const {
 	return ROOMS_MIN;
 }
 
-// Получить время ожидания ответа в случае встречи с монстром
+// РџРѕР»СѓС‡РёС‚СЊ РІСЂРµРјСЏ РѕР¶РёРґР°РЅРёСЏ РѕС‚РІРµС‚Р° РІ СЃР»СѓС‡Р°Рµ РІСЃС‚СЂРµС‡Рё СЃ РјРѕРЅСЃС‚СЂРѕРј
 std::uint64_t GameModel::getWaitTime() const {
 	return WAIT_TIME_SEC;
 }
 
-// Получить величину уменьшения здоровья при перемещении
+// РџРѕР»СѓС‡РёС‚СЊ РІРµР»РёС‡РёРЅСѓ СѓРјРµРЅСЊС€РµРЅРёСЏ Р·РґРѕСЂРѕРІСЊСЏ РїСЂРё РїРµСЂРµРјРµС‰РµРЅРёРё
 double GameModel::getHealthPenalty() const {
 	return HEALTH_PENALTY;
 }
 
-// Получить процент уменьшение здоровья при атаках монстра
+// РџРѕР»СѓС‡РёС‚СЊ РїСЂРѕС†РµРЅС‚ СѓРјРµРЅСЊС€РµРЅРёРµ Р·РґРѕСЂРѕРІСЊСЏ РїСЂРё Р°С‚Р°РєР°С… РјРѕРЅСЃС‚СЂР°
 double GameModel::getHealthLosePercent() const {
 	return HEALTH_LOSE_PERCENT;
 }
 
-// Получить процент увеличения здоровья после приёма пищи
+// РџРѕР»СѓС‡РёС‚СЊ РїСЂРѕС†РµРЅС‚ СѓРІРµР»РёС‡РµРЅРёСЏ Р·РґРѕСЂРѕРІСЊСЏ РїРѕСЃР»Рµ РїСЂРёС‘РјР° РїРёС‰Рё
 double GameModel::getHealthLiftPercent() const {
 	return HEALTH_LIFT_PERCENT;
 }
 
-// Функция взятия золота (группировка золота в один предмет)
+// Р¤СѓРЅРєС†РёСЏ РІР·СЏС‚РёСЏ Р·РѕР»РѕС‚Р° (РіСЂСѓРїРїРёСЂРѕРІРєР° Р·РѕР»РѕС‚Р° РІ РѕРґРёРЅ РїСЂРµРґРјРµС‚)
 void GameModel::pickupHeroGold(Object item) {
-	// Поиск имеющегося в инвентаре Героя золота
+	// РџРѕРёСЃРє РёРјРµСЋС‰РµРіРѕСЃСЏ РІ РёРЅРІРµРЅС‚Р°СЂРµ Р“РµСЂРѕСЏ Р·РѕР»РѕС‚Р°
 	auto hero_items = hero.getItems();
 	auto found_gold = std::find_if(hero_items.begin(), hero_items.end(),
 								   [&](const Object& obj) { return item.type == obj.type; });
 
-	// Если золото найдено -- добавляем к нему переданное, иначе добавляем золото в начало инвентаря 
+	// Р•СЃР»Рё Р·РѕР»РѕС‚Рѕ РЅР°Р№РґРµРЅРѕ -- РґРѕР±Р°РІР»СЏРµРј Рє РЅРµРјСѓ РїРµСЂРµРґР°РЅРЅРѕРµ, РёРЅР°С‡Рµ РґРѕР±Р°РІР»СЏРµРј Р·РѕР»РѕС‚Рѕ РІ РЅР°С‡Р°Р»Рѕ РёРЅРІРµРЅС‚Р°СЂСЏ 
 	Object gold_sum = item;
 	if (found_gold != hero_items.end()) {
 		gold_sum = {std::to_string(std::stoi(item.name) + std::stoi(found_gold->name)), item.type};
@@ -287,11 +287,11 @@ void GameModel::pickupHeroGold(Object item) {
 	hero.setItems(hero_items);
 }
 
-// Получить ширину и высоту массива по количеству комнат
+// РџРѕР»СѓС‡РёС‚СЊ С€РёСЂРёРЅСѓ Рё РІС‹СЃРѕС‚Сѓ РјР°СЃСЃРёРІР° РїРѕ РєРѕР»РёС‡РµСЃС‚РІСѓ РєРѕРјРЅР°С‚
 void GameModel::getMazeSize(std::uint32_t rooms_count, std::uint16_t &width, std::uint16_t &height) {
 	std::vector<Pair> factors;
 
-	// Поиск всех возможных делителей числа (кол-ва комнат)
+	// РџРѕРёСЃРє РІСЃРµС… РІРѕР·РјРѕР¶РЅС‹С… РґРµР»РёС‚РµР»РµР№ С‡РёСЃР»Р° (РєРѕР»-РІР° РєРѕРјРЅР°С‚)
 	for (std::uint32_t i = 1; i <= rooms_count; ++i)
 		if (rooms_count % i == 0) {
 			auto a = static_cast<std::uint16_t>(i);
@@ -300,8 +300,8 @@ void GameModel::getMazeSize(std::uint32_t rooms_count, std::uint16_t &width, std
 			factors.push_back({a, b});
 		}
 
-	// Если есть делители -- выбираем центральные из них,
-	// приближающие лабиринт к квадратному/прямоугольному виду
+	// Р•СЃР»Рё РµСЃС‚СЊ РґРµР»РёС‚РµР»Рё -- РІС‹Р±РёСЂР°РµРј С†РµРЅС‚СЂР°Р»СЊРЅС‹Рµ РёР· РЅРёС…,
+	// РїСЂРёР±Р»РёР¶Р°СЋС‰РёРµ Р»Р°Р±РёСЂРёРЅС‚ Рє РєРІР°РґСЂР°С‚РЅРѕРјСѓ/РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРѕРјСѓ РІРёРґСѓ
 	if (!factors.empty()) {
 		auto center = factors.size() / 2;
 

@@ -1,4 +1,4 @@
-#ifndef MAZE_H
+п»ї#ifndef MAZE_H
 #define MAZE_H
 
 #include "Cell.h"
@@ -8,34 +8,34 @@ public:
 	Maze();
 	Maze(std::uint16_t width, std::uint16_t height);
 
-	// Инициализация лабиринта
+	// РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ Р»Р°Р±РёСЂРёРЅС‚Р°
 	void init(std::uint16_t width, std::uint16_t height);
 
-	// Получить ширину/высоту лабиринта
+	// РџРѕР»СѓС‡РёС‚СЊ С€РёСЂРёРЅСѓ/РІС‹СЃРѕС‚Сѓ Р»Р°Р±РёСЂРёРЅС‚Р°
 	std::uint16_t getWidth() const;
 	std::uint16_t getHeight() const;
 	
-	// Получить комнату по координатам
+	// РџРѕР»СѓС‡РёС‚СЊ РєРѕРјРЅР°С‚Сѓ РїРѕ РєРѕРѕСЂРґРёРЅР°С‚Р°Рј
 	Cell getCell(std::uint16_t x, std::uint16_t y) const;
 
-	// Добавить объект в комнату
+	// Р”РѕР±Р°РІРёС‚СЊ РѕР±СЉРµРєС‚ РІ РєРѕРјРЅР°С‚Сѓ
 	void pushCellObject(std::uint16_t x, std::uint16_t y, Object object);
-	// Взять объект из комнаты
+	// Р’Р·СЏС‚СЊ РѕР±СЉРµРєС‚ РёР· РєРѕРјРЅР°С‚С‹
 	Object peekCellObject(std::uint16_t x, std::uint16_t y, Object object) const;
 
-	// Получить объекты комнаты
+	// РџРѕР»СѓС‡РёС‚СЊ РѕР±СЉРµРєС‚С‹ РєРѕРјРЅР°С‚С‹
 	std::vector<Object> getCellObjects(std::uint16_t x, std::uint16_t y) const;
-	// Очистить объекты комнаты
+	// РћС‡РёСЃС‚РёС‚СЊ РѕР±СЉРµРєС‚С‹ РєРѕРјРЅР°С‚С‹
 	void clearCellObjects(std::uint16_t x, std::uint16_t y);
 
-	// Установить тип комнаты
+	// РЈСЃС‚Р°РЅРѕРІРёС‚СЊ С‚РёРї РєРѕРјРЅР°С‚С‹
 	void setCellType(std::uint16_t x, std::uint16_t y, CellType type);
-	// Получить тип комнаты
+	// РџРѕР»СѓС‡РёС‚СЊ С‚РёРї РєРѕРјРЅР°С‚С‹
 	CellType getCellType(std::uint16_t x, std::uint16_t y) const;
 
-	// Сгенерировать лабиринт
+	// РЎРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ Р»Р°Р±РёСЂРёРЅС‚
 	void generate();
-	// Очистить лабиринт
+	// РћС‡РёСЃС‚РёС‚СЊ Р»Р°Р±РёСЂРёРЅС‚
 	void clear();
 
 	~Maze();
@@ -47,7 +47,7 @@ private:
 	Cell** field;
 };
 
-// Получение случайного числа в диапазоне
+// РџРѕР»СѓС‡РµРЅРёРµ СЃР»СѓС‡Р°Р№РЅРѕРіРѕ С‡РёСЃР»Р° РІ РґРёР°РїР°Р·РѕРЅРµ
 std::uint16_t rand(std::uint16_t beg, std::uint16_t end);
 
 #endif

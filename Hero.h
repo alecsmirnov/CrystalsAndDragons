@@ -1,4 +1,4 @@
-#ifndef HERO_H
+п»ї#ifndef HERO_H
 #define HERO_H
 
 #include <cstdint>
@@ -7,29 +7,29 @@
 
 #include "Object.h"
 
-// Объект Героя
+// РћР±СЉРµРєС‚ Р“РµСЂРѕСЏ
 class Hero {
 public:
 	Hero();
 	Hero(std::uint16_t x, std::uint16_t y, double health);
 	
-	// Изменине/получение положения Героя
+	// РР·РјРµРЅРёРЅРµ/РїРѕР»СѓС‡РµРЅРёРµ РїРѕР»РѕР¶РµРЅРёСЏ Р“РµСЂРѕСЏ
 	void setX(std::uint16_t x);
 	std::uint16_t getX() const;
 
 	void setY(std::uint16_t y);
 	std::uint16_t getY() const;
 
-	// Изменение/получения здоровья Героя
+	// РР·РјРµРЅРµРЅРёРµ/РїРѕР»СѓС‡РµРЅРёСЏ Р·РґРѕСЂРѕРІСЊСЏ Р“РµСЂРѕСЏ
 	void setHelth(double health);
 	double getHealth() const;
 
-	// Положить предмет в инвентарь
+	// РџРѕР»РѕР¶РёС‚СЊ РїСЂРµРґРјРµС‚ РІ РёРЅРІРµРЅС‚Р°СЂСЊ
 	void pickupItem(Object item);
-	// Выкинуть предмет из инвентаря
+	// Р’С‹РєРёРЅСѓС‚СЊ РїСЂРµРґРјРµС‚ РёР· РёРЅРІРµРЅС‚Р°СЂСЏ
 	Object dropItem(Object item);
 
-	// Задать/получить/очистить инвентарь Героя
+	// Р—Р°РґР°С‚СЊ/РїРѕР»СѓС‡РёС‚СЊ/РѕС‡РёСЃС‚РёС‚СЊ РёРЅРІРµРЅС‚Р°СЂСЊ Р“РµСЂРѕСЏ
 	void setItems(const std::vector<Object>& items);
 	std::vector<Object> getItems() const;
 	void clearItems();
@@ -37,10 +37,10 @@ public:
 	~Hero();
 
 private:
-	std::uint16_t x;		// Положение Героя по оси х,
-	std::uint16_t y;		// по оси y
+	std::uint16_t x;		// РџРѕР»РѕР¶РµРЅРёРµ Р“РµСЂРѕСЏ РїРѕ РѕСЃРё С…,
+	std::uint16_t y;		// РїРѕ РѕСЃРё y
 
-	double health;			// Здоровье Героя
+	double health;			// Р—РґРѕСЂРѕРІСЊРµ Р“РµСЂРѕСЏ
 
 	std::vector<Object> items;
 };

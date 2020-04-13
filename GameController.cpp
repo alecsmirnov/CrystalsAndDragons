@@ -1,4 +1,4 @@
-#include "GameController.h"
+п»ї#include "GameController.h"
 
 #include <cmath>
 
@@ -9,26 +9,26 @@ GameController::GameController(GameModel* model, GameView* view) {
 	executed = true;
 }
 
-// Начать игру
+// РќР°С‡Р°С‚СЊ РёРіСЂСѓ
 void GameController::start() {
-	// Получить размер лабиринта и инициализировать его
+	// РџРѕР»СѓС‡РёС‚СЊ СЂР°Р·РјРµСЂ Р»Р°Р±РёСЂРёРЅС‚Р° Рё РёРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°С‚СЊ РµРіРѕ
 	view->initInput();
 	model->initModel(view->getRoomsCount());
 
 	GameOperation operation;
 
 	do {
-		// Считать выбранную команду и выполнить её
+		// РЎС‡РёС‚Р°С‚СЊ РІС‹Р±СЂР°РЅРЅСѓСЋ РєРѕРјР°РЅРґСѓ Рё РІС‹РїРѕР»РЅРёС‚СЊ РµС‘
 		view->update();
 		view->input();
 
-		// Получить время ввода команды и статус угрозы
+		// РџРѕР»СѓС‡РёС‚СЊ РІСЂРµРјСЏ РІРІРѕРґР° РєРѕРјР°РЅРґС‹ Рё СЃС‚Р°С‚СѓСЃ СѓРіСЂРѕР·С‹
 		operation = view->getOperation();
 		auto threat = view->getThreatStatus();
 
 		if (operation.command != GameCommand::EXIT && executed) {
-			// Если угрозы в комнате нет -- выполнить команду,
-			// иначе -- проверяем время ввода команды: откидываем назад или бросаем кости
+			// Р•СЃР»Рё СѓРіСЂРѕР·С‹ РІ РєРѕРјРЅР°С‚Рµ РЅРµС‚ -- РІС‹РїРѕР»РЅРёС‚СЊ РєРѕРјР°РЅРґСѓ,
+			// РёРЅР°С‡Рµ -- РїСЂРѕРІРµСЂСЏРµРј РІСЂРµРјСЏ РІРІРѕРґР° РєРѕРјР°РЅРґС‹: РѕС‚РєРёРґС‹РІР°РµРј РЅР°Р·Р°Рґ РёР»Рё Р±СЂРѕСЃР°РµРј РєРѕСЃС‚Рё
 			if (!threat)
 				executeOperation(operation);
 			else 
@@ -40,7 +40,7 @@ void GameController::start() {
 	} while (operation.command != GameCommand::EXIT && executed);
 }
 
-// Бросить кости в случае встречи с монстром
+// Р‘СЂРѕСЃРёС‚СЊ РєРѕСЃС‚Рё РІ СЃР»СѓС‡Р°Рµ РІСЃС‚СЂРµС‡Рё СЃ РјРѕРЅСЃС‚СЂРѕРј
 void GameController::checkRoll(GameOperation operation) {
 	auto dice_roll = rollDice();
 
@@ -51,7 +51,7 @@ void GameController::checkRoll(GameOperation operation) {
 	}
 }
 
-// Выполнить операцию без угрозы
+// Р’С‹РїРѕР»РЅРёС‚СЊ РѕРїРµСЂР°С†РёСЋ Р±РµР· СѓРіСЂРѕР·С‹
 void GameController::executeOperation(GameOperation operation) {
 	switch (operation.command) {
 		case GameCommand::NORTH: moveToDirection(CellDirection::NORTH); break;
@@ -67,39 +67,39 @@ void GameController::executeOperation(GameOperation operation) {
 	}
 }
 
-// Откинуть Героя в комнату, откуда он пришёл и вывести сообщение
+// РћС‚РєРёРЅСѓС‚СЊ Р“РµСЂРѕСЏ РІ РєРѕРјРЅР°С‚Сѓ, РѕС‚РєСѓРґР° РѕРЅ РїСЂРёС€С‘Р» Рё РІС‹РІРµСЃС‚Рё СЃРѕРѕР±С‰РµРЅРёРµ
 void GameController::knockBack() {
 	view->displayFightLose();
 
-	// Отнять здоровье на указанный процент
+	// РћС‚РЅСЏС‚СЊ Р·РґРѕСЂРѕРІСЊРµ РЅР° СѓРєР°Р·Р°РЅРЅС‹Р№ РїСЂРѕС†РµРЅС‚
 	auto health = std::round(model->getHeroHealth() * model->getHealthLosePercent());
 
-	// Переместить в комнату, откуда пришёл Герой
+	// РџРµСЂРµРјРµСЃС‚РёС‚СЊ РІ РєРѕРјРЅР°С‚Сѓ, РѕС‚РєСѓРґР° РїСЂРёС€С‘Р» Р“РµСЂРѕР№
 	model->setHeroHealth(health);
 	moveToDirection(model->getPreviosRoom());
 }
 
-// Сыграть ничью. Отнять Герою здоровье
+// РЎС‹РіСЂР°С‚СЊ РЅРёС‡СЊСЋ. РћС‚РЅСЏС‚СЊ Р“РµСЂРѕСЋ Р·РґРѕСЂРѕРІСЊРµ
 void GameController::toDrow(GameOperation operation) {
 	view->displayFightDrow();
 
-	// Отнять здоровье на указанный процент
+	// РћС‚РЅСЏС‚СЊ Р·РґРѕСЂРѕРІСЊРµ РЅР° СѓРєР°Р·Р°РЅРЅС‹Р№ РїСЂРѕС†РµРЅС‚
 	auto health = std::round(model->getHeroHealth() * model->getHealthLosePercent());
 
-	// Выполнить команду
+	// Р’С‹РїРѕР»РЅРёС‚СЊ РєРѕРјР°РЅРґСѓ
 	model->setHeroHealth(health);
 	executeOperation(operation);
 }
 
-// Выполнить команду ничего не потеряв
+// Р’С‹РїРѕР»РЅРёС‚СЊ РєРѕРјР°РЅРґСѓ РЅРёС‡РµРіРѕ РЅРµ РїРѕС‚РµСЂСЏРІ
 void GameController::complete(GameOperation operation) {
 	view->displayFightWin();
 
-	// Выполнить команду
+	// Р’С‹РїРѕР»РЅРёС‚СЊ РєРѕРјР°РЅРґСѓ
 	executeOperation(operation); 
 }
 
-// Пойти в указанном направлении
+// РџРѕР№С‚Рё РІ СѓРєР°Р·Р°РЅРЅРѕРј РЅР°РїСЂР°РІР»РµРЅРёРё
 void GameController::moveToDirection(CellDirection direction) {
 	switch (direction) {
 		case CellDirection::NORTH: model->setHeroX(model->getHeroX() - 1); break;
@@ -108,10 +108,10 @@ void GameController::moveToDirection(CellDirection direction) {
 		case CellDirection::WEST:  model->setHeroY(model->getHeroY() - 1); break;
 	}
 
-	// Отнять здоровье на величину уменьшения при перемещении
+	// РћС‚РЅСЏС‚СЊ Р·РґРѕСЂРѕРІСЊРµ РЅР° РІРµР»РёС‡РёРЅСѓ СѓРјРµРЅСЊС€РµРЅРёСЏ РїСЂРё РїРµСЂРµРјРµС‰РµРЅРёРё
 	auto health = model->getHeroHealth() - model->getHealthPenalty();
 
-	// Проверить здоровье после перемещения
+	// РџСЂРѕРІРµСЂРёС‚СЊ Р·РґРѕСЂРѕРІСЊРµ РїРѕСЃР»Рµ РїРµСЂРµРјРµС‰РµРЅРёСЏ
 	if (0 < health)
 		model->setHeroHealth(health);
 	else {
@@ -120,54 +120,54 @@ void GameController::moveToDirection(CellDirection direction) {
 	}
 }
 
-// Взять предмет из комнаты
+// Р’Р·СЏС‚СЊ РїСЂРµРґРјРµС‚ РёР· РєРѕРјРЅР°С‚С‹
 void GameController::getItem(Object item) {
-	// Взять предмет из комнаты
+	// Р’Р·СЏС‚СЊ РїСЂРµРґРјРµС‚ РёР· РєРѕРјРЅР°С‚С‹
 	auto peek_obj = model->peekRoomObject(item);
 
-	// Передать предмет Герою
+	// РџРµСЂРµРґР°С‚СЊ РїСЂРµРґРјРµС‚ Р“РµСЂРѕСЋ
 	model->pickupHeroItem(peek_obj);
 }
 
-// Выкинуть предмет из инвентаря
+// Р’С‹РєРёРЅСѓС‚СЊ РїСЂРµРґРјРµС‚ РёР· РёРЅРІРµРЅС‚Р°СЂСЏ
 void GameController::dropItem(Object item) {
-	// Взять предмет у игрока
+	// Р’Р·СЏС‚СЊ РїСЂРµРґРјРµС‚ Сѓ РёРіСЂРѕРєР°
 	auto drop_item = model->dropHeroItem(item);
 
-	// Положить предмет в комнату
+	// РџРѕР»РѕР¶РёС‚СЊ РїСЂРµРґРјРµС‚ РІ РєРѕРјРЅР°С‚Сѓ
 	model->pushRoomObject(drop_item);
 }
 
-// Съесть пищу и восполнить здоровье
+// РЎСЉРµСЃС‚СЊ РїРёС‰Сѓ Рё РІРѕСЃРїРѕР»РЅРёС‚СЊ Р·РґРѕСЂРѕРІСЊРµ
 void GameController::eatFood(Object food) {
-	// Взять пищу из инвентаря
+	// Р’Р·СЏС‚СЊ РїРёС‰Сѓ РёР· РёРЅРІРµРЅС‚Р°СЂСЏ
 	auto used_food = model->dropHeroItem(food);
-	// Взять пищу из комнаты
+	// Р’Р·СЏС‚СЊ РїРёС‰Сѓ РёР· РєРѕРјРЅР°С‚С‹
 	used_food = model->peekRoomObject(food);
 
-	// Увеличить здоровье на процент увеличения здоровья
+	// РЈРІРµР»РёС‡РёС‚СЊ Р·РґРѕСЂРѕРІСЊРµ РЅР° РїСЂРѕС†РµРЅС‚ СѓРІРµР»РёС‡РµРЅРёСЏ Р·РґРѕСЂРѕРІСЊСЏ
 	auto health = std::round(model->getHeroHealth() * model->getHealthLiftPercent());
 
 	model->setHeroHealth(health);
 }
 
-// Сразиться с монтром
+// РЎСЂР°Р·РёС‚СЊСЃСЏ СЃ РјРѕРЅС‚СЂРѕРј
 void GameController::fightMonster(Object monster) {
-	// Удалить монстра из комнаты
+	// РЈРґР°Р»РёС‚СЊ РјРѕРЅСЃС‚СЂР° РёР· РєРѕРјРЅР°С‚С‹
 	model->peekRoomObject(monster);
 }
 
-// Открыть сундук
+// РћС‚РєСЂС‹С‚СЊ СЃСѓРЅРґСѓРє
 void GameController::openChest() {
 	auto items = model->getHeroItems();
 
-	// Проверить наличие ключа в инвентаре
+	// РџСЂРѕРІРµСЂРёС‚СЊ РЅР°Р»РёС‡РёРµ РєР»СЋС‡Р° РІ РёРЅРІРµРЅС‚Р°СЂРµ
 	bool found = false;
 	for (auto it = items.begin(); it != items.end() && !found; ++it)
 		if (it->type == ObjectType::KEY)
 			found = true;
 
-	// Если ключ найден -- закончить игру, иначе -- вывести сообщение
+	// Р•СЃР»Рё РєР»СЋС‡ РЅР°Р№РґРµРЅ -- Р·Р°РєРѕРЅС‡РёС‚СЊ РёРіСЂСѓ, РёРЅР°С‡Рµ -- РІС‹РІРµСЃС‚Рё СЃРѕРѕР±С‰РµРЅРёРµ
 	if (found) {
 		close();
 		view->displayWin();

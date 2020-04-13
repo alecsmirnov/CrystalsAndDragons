@@ -1,28 +1,28 @@
-#ifndef OBJECT_H
+п»ї#ifndef OBJECT_H
 #define OBJECT_H
 
 #include <string>
 
-// Тип игрового объекта,
-// расположенного в комнатах или инвентаре Героя
+// РўРёРї РёРіСЂРѕРІРѕРіРѕ РѕР±СЉРµРєС‚Р°,
+// СЂР°СЃРїРѕР»РѕР¶РµРЅРЅРѕРіРѕ РІ РєРѕРјРЅР°С‚Р°С… РёР»Рё РёРЅРІРµРЅС‚Р°СЂРµ Р“РµСЂРѕСЏ
 enum class ObjectType {
-	WEAPON,				// Оружине
-	TORCH,				// Освещение
-	KEY,				// Ключ
-	CHEST,				// Сундук
-	FOOD,				// Еда
-	MONSTER,			// Монстер
-	DIRECTION,			// Направление движения
-	GOLD,				// Деньги
-	EMPTY				// Пустой объект
+	WEAPON,				// РћСЂСѓР¶РёРЅРµ
+	TORCH,				// РћСЃРІРµС‰РµРЅРёРµ
+	KEY,				// РљР»СЋС‡
+	CHEST,				// РЎСѓРЅРґСѓРє
+	FOOD,				// Р•РґР°
+	MONSTER,			// РњРѕРЅСЃС‚РµСЂ
+	DIRECTION,			// РќР°РїСЂР°РІР»РµРЅРёРµ РґРІРёР¶РµРЅРёСЏ
+	GOLD,				// Р”РµРЅСЊРіРё
+	EMPTY				// РџСѓСЃС‚РѕР№ РѕР±СЉРµРєС‚
 };
 
 struct Object {
-	std::string name;						// Название объекта
-	ObjectType type = ObjectType::EMPTY;	// Тип объекта
+	std::string name;						// РќР°Р·РІР°РЅРёРµ РѕР±СЉРµРєС‚Р°
+	ObjectType type = ObjectType::EMPTY;	// РўРёРї РѕР±СЉРµРєС‚Р°
 };
 
-// Перегрузка операции сравнения для игрового объекта
+// РџРµСЂРµРіСЂСѓР·РєР° РѕРїРµСЂР°С†РёРё СЃСЂР°РІРЅРµРЅРёСЏ РґР»СЏ РёРіСЂРѕРІРѕРіРѕ РѕР±СЉРµРєС‚Р°
 static inline bool operator==(const Object &lhs, const Object &rhs) {
 	return lhs.name == rhs.name && lhs.type == rhs.type;
 }

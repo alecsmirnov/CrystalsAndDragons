@@ -1,4 +1,4 @@
-#include "Maze.h"
+п»ї#include "Maze.h"
 
 #include <random>
 #include <stack>
@@ -9,7 +9,7 @@ Maze::Maze(std::uint16_t width, std::uint16_t height) {
 	init(width, height);
 }
 
-// Инициализация лабиринта
+// РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ Р»Р°Р±РёСЂРёРЅС‚Р°
 void Maze::init(std::uint16_t width, std::uint16_t height) {
 	if (field)
 		clear();
@@ -26,17 +26,17 @@ void Maze::init(std::uint16_t width, std::uint16_t height) {
 	}
 }
 
-// Получить ширину лабиринта
+// РџРѕР»СѓС‡РёС‚СЊ С€РёСЂРёРЅСѓ Р»Р°Р±РёСЂРёРЅС‚Р°
 std::uint16_t Maze::getWidth() const {
 	return width;
 }
 
-// Получить высоту лабиринта
+// РџРѕР»СѓС‡РёС‚СЊ РІС‹СЃРѕС‚Сѓ Р»Р°Р±РёСЂРёРЅС‚Р°
 std::uint16_t Maze::getHeight() const {
 	return height;
 }
 
-// Получить комнату по координатам
+// РџРѕР»СѓС‡РёС‚СЊ РєРѕРјРЅР°С‚Сѓ РїРѕ РєРѕРѕСЂРґРёРЅР°С‚Р°Рј
 Cell Maze::getCell(std::uint16_t x, std::uint16_t y) const {
 	Cell cell;
 
@@ -46,13 +46,13 @@ Cell Maze::getCell(std::uint16_t x, std::uint16_t y) const {
 	return cell;
 }
 
-// Добавить объект в комнату
+// Р”РѕР±Р°РІРёС‚СЊ РѕР±СЉРµРєС‚ РІ РєРѕРјРЅР°С‚Сѓ
 void Maze::pushCellObject(std::uint16_t x, std::uint16_t y, Object item) {
 	if (x < width && y < height)
 		field[x][y].pushObject(item);
 }
 
-// Взять объект из комнаты
+// Р’Р·СЏС‚СЊ РѕР±СЉРµРєС‚ РёР· РєРѕРјРЅР°С‚С‹
 Object Maze::peekCellObject(std::uint16_t x, std::uint16_t y, Object item) const {
 	Object peek_item;
 
@@ -62,7 +62,7 @@ Object Maze::peekCellObject(std::uint16_t x, std::uint16_t y, Object item) const
 	return peek_item;
 }
 
-// Получить объекты комнаты
+// РџРѕР»СѓС‡РёС‚СЊ РѕР±СЉРµРєС‚С‹ РєРѕРјРЅР°С‚С‹
 std::vector<Object> Maze::getCellObjects(std::uint16_t x, std::uint16_t y) const {
 	std::vector<Object> items;
 
@@ -72,19 +72,19 @@ std::vector<Object> Maze::getCellObjects(std::uint16_t x, std::uint16_t y) const
 	return items;
 }
 
-// Очистить объекты комнаты
+// РћС‡РёСЃС‚РёС‚СЊ РѕР±СЉРµРєС‚С‹ РєРѕРјРЅР°С‚С‹
 void Maze::clearCellObjects(std::uint16_t x, std::uint16_t y) {
 	if (x < width && y < height)
 		field[x][y].clearObjects();
 }
 
-// Установить тип комнаты
+// РЈСЃС‚Р°РЅРѕРІРёС‚СЊ С‚РёРї РєРѕРјРЅР°С‚С‹
 void Maze::setCellType(std::uint16_t x, std::uint16_t y, CellType type) {
 	if (x < width && y < height)
 		field[x][y].setType(type);
 }
 
-// Получить тип комнаты
+// РџРѕР»СѓС‡РёС‚СЊ С‚РёРї РєРѕРјРЅР°С‚С‹
 CellType Maze::getCellType(std::uint16_t x, std::uint16_t y) const {
 	CellType type = CellType::NONE;
 
@@ -94,22 +94,22 @@ CellType Maze::getCellType(std::uint16_t x, std::uint16_t y) const {
 	return type;
 }
 
-// Сгенерировать лабиринт
+// РЎРіРµРЅРµСЂРёСЂРѕРІР°С‚СЊ Р»Р°Р±РёСЂРёРЅС‚
 void Maze::generate() {
-	// Определение начальной точки движения генерации
+	// РћРїСЂРµРґРµР»РµРЅРёРµ РЅР°С‡Р°Р»СЊРЅРѕР№ С‚РѕС‡РєРё РґРІРёР¶РµРЅРёСЏ РіРµРЅРµСЂР°С†РёРё
 	std::uint16_t x_start = rand(0, width - 1);
 	std::uint16_t y_start = rand(0, height - 1);
 
-	// Добавление точку в "маршрут"
+	// Р”РѕР±Р°РІР»РµРЅРёРµ С‚РѕС‡РєСѓ РІ "РјР°СЂС€СЂСѓС‚"
 	std::stack<Cell*> path({&field[x_start][y_start]});
 
-	// Пока "маршрут" не пустой
+	// РџРѕРєР° "РјР°СЂС€СЂСѓС‚" РЅРµ РїСѓСЃС‚РѕР№
 	while (!path.empty()) {
-		// Берём верхнюю точку из маршрута
+		// Р‘РµСЂС‘Рј РІРµСЂС…РЅСЋСЋ С‚РѕС‡РєСѓ РёР· РјР°СЂС€СЂСѓС‚Р°
 		Cell* cur_cell = path.top();
 		std::vector<Cell*> neighbors;
 
-		// Находим непосещённых соседей текущей точки
+		// РќР°С…РѕРґРёРј РЅРµРїРѕСЃРµС‰С‘РЅРЅС‹С… СЃРѕСЃРµРґРµР№ С‚РµРєСѓС‰РµР№ С‚РѕС‡РєРё
 		if (0 < cur_cell->getX() && !field[cur_cell->getX() - 1][cur_cell->getY()].isVisited())
 			neighbors.push_back(&field[cur_cell->getX() - 1][cur_cell->getY()]);
 
@@ -122,14 +122,14 @@ void Maze::generate() {
 		if (cur_cell->getY() < height - 1 && !field[cur_cell->getX()][cur_cell->getY() + 1].isVisited())
 			neighbors.push_back(&field[cur_cell->getX()][cur_cell->getY() + 1]);
 
-		// Если у точки есть непосещённые соседи
+		// Р•СЃР»Рё Сѓ С‚РѕС‡РєРё РµСЃС‚СЊ РЅРµРїРѕСЃРµС‰С‘РЅРЅС‹Рµ СЃРѕСЃРµРґРё
 		if (!neighbors.empty()) {
-			// Выбираем случайного соседа и получаем направление в котором он находится
+			// Р’С‹Р±РёСЂР°РµРј СЃР»СѓС‡Р°Р№РЅРѕРіРѕ СЃРѕСЃРµРґР° Рё РїРѕР»СѓС‡Р°РµРј РЅР°РїСЂР°РІР»РµРЅРёРµ РІ РєРѕС‚РѕСЂРѕРј РѕРЅ РЅР°С…РѕРґРёС‚СЃСЏ
 			Cell* next_cell = neighbors[rand(0, static_cast<uint16_t>(neighbors.size()) - 1)];
 			CellDirection direction = getDirection(cur_cell->getX(), cur_cell->getY(), 
 												   next_cell->getX(), next_cell->getY());
 			
-			// Отрываем направления (двери) между текущей точкой и выбранным соседом
+			// РћС‚СЂС‹РІР°РµРј РЅР°РїСЂР°РІР»РµРЅРёСЏ (РґРІРµСЂРё) РјРµР¶РґСѓ С‚РµРєСѓС‰РµР№ С‚РѕС‡РєРѕР№ Рё РІС‹Р±СЂР°РЅРЅС‹Рј СЃРѕСЃРµРґРѕРј
 			switch (direction) {
 				case CellDirection::NORTH: {
 					cur_cell->open(CellDirection::NORTH);
@@ -153,13 +153,13 @@ void Maze::generate() {
 				}
 			}
 
-			// Добавлеяем соседа 
+			// Р”РѕР±Р°РІР»РµСЏРµРј СЃРѕСЃРµРґР° 
 			path.push(next_cell);
 		}
 		else
 			path.pop();
 
-		// Если доступных соседей нет -- выбираем точку из маршрута
+		// Р•СЃР»Рё РґРѕСЃС‚СѓРїРЅС‹С… СЃРѕСЃРµРґРµР№ РЅРµС‚ -- РІС‹Р±РёСЂР°РµРј С‚РѕС‡РєСѓ РёР· РјР°СЂС€СЂСѓС‚Р°
 	}
 }
 
@@ -173,7 +173,7 @@ Maze::~Maze() {
 	clear();
 }
 
-// Получение случайного числа в диапазоне
+// РџРѕР»СѓС‡РµРЅРёРµ СЃР»СѓС‡Р°Р№РЅРѕРіРѕ С‡РёСЃР»Р° РІ РґРёР°РїР°Р·РѕРЅРµ
 std::uint16_t rand(std::uint16_t beg, std::uint16_t end) {
 	std::mt19937 engine(std::random_device{}());
 	std::uniform_int_distribution<std::mt19937::result_type> distance(beg, end);

@@ -1,11 +1,11 @@
-#include "Cell.h"
+п»ї#include "Cell.h"
 
 #include <cmath>
 
 static constexpr double PI = 3.141592653589793238463;
-// Угол 45 градусов для вычисления направления по тангенсу угла наклона
+// РЈРіРѕР» 45 РіСЂР°РґСѓСЃРѕРІ РґР»СЏ РІС‹С‡РёСЃР»РµРЅРёСЏ РЅР°РїСЂР°РІР»РµРЅРёСЏ РїРѕ С‚Р°РЅРіРµРЅСЃСѓ СѓРіР»Р° РЅР°РєР»РѕРЅР°
 static constexpr double ANGLE_45 = PI / 4;
-// Количество направлений для расчёта
+// РљРѕР»РёС‡РµСЃС‚РІРѕ РЅР°РїСЂР°РІР»РµРЅРёР№ РґР»СЏ СЂР°СЃС‡С‘С‚Р°
 static constexpr std::uint16_t DIRECTIONS = 8;
 
 Cell::Cell(): Cell(0, 0) {}
@@ -22,7 +22,7 @@ Cell::Cell(uint16_t x, uint16_t y, CellType type) {
 	this->type = type;
 }
 
-// Задать координаты комнаты
+// Р—Р°РґР°С‚СЊ РєРѕРѕСЂРґРёРЅР°С‚С‹ РєРѕРјРЅР°С‚С‹
 void Cell::setCoords(uint16_t x, uint16_t y) {
 	this->x = x;
 	this->y = y;
@@ -53,16 +53,16 @@ CellType Cell::getType() const {
 	return type;
 }
 
-// Добавить объект в комнату
+// Р”РѕР±Р°РІРёС‚СЊ РѕР±СЉРµРєС‚ РІ РєРѕРјРЅР°С‚Сѓ
 void Cell::pushObject(Object object) {
 	objects.push_back(object);
 }
 
-// Взять объект из комнаты
+// Р’Р·СЏС‚СЊ РѕР±СЉРµРєС‚ РёР· РєРѕРјРЅР°С‚С‹
 Object Cell::peekObject(Object object) {
 	Object peek_object;
 
-	// Поиск объекта в комнате
+	// РџРѕРёСЃРє РѕР±СЉРµРєС‚Р° РІ РєРѕРјРЅР°С‚Рµ
 	auto peek_object_pos = std::find(objects.begin(), objects.end(), object);
 
 	if (peek_object_pos != objects.end()) {
@@ -73,27 +73,27 @@ Object Cell::peekObject(Object object) {
 	return peek_object;
 }
 
-// Получить все объекты комнаты
+// РџРѕР»СѓС‡РёС‚СЊ РІСЃРµ РѕР±СЉРµРєС‚С‹ РєРѕРјРЅР°С‚С‹
 std::vector<Object> Cell::getObjects() const {
 	return objects;
 }
 
-// Очистить объекты комнаты
+// РћС‡РёСЃС‚РёС‚СЊ РѕР±СЉРµРєС‚С‹ РєРѕРјРЅР°С‚С‹
 void Cell::clearObjects() {
 	std::vector<Object>().swap(objects);
 }
 
-// Открыть указанное направление (дверь) комнаты
+// РћС‚РєСЂС‹С‚СЊ СѓРєР°Р·Р°РЅРЅРѕРµ РЅР°РїСЂР°РІР»РµРЅРёРµ (РґРІРµСЂСЊ) РєРѕРјРЅР°С‚С‹
 void Cell::open(CellDirection direction) {
 	changeDirection(direction, true);
 }
 
-// Закрыть указанное направление (дверь) комнаты
+// Р—Р°РєСЂС‹С‚СЊ СѓРєР°Р·Р°РЅРЅРѕРµ РЅР°РїСЂР°РІР»РµРЅРёРµ (РґРІРµСЂСЊ) РєРѕРјРЅР°С‚С‹
 void Cell::close(CellDirection direction) {
 	changeDirection(direction, false);
 }
 
-// Преверить открыто ли указанное направление (дверь)
+// РџСЂРµРІРµСЂРёС‚СЊ РѕС‚РєСЂС‹С‚Рѕ Р»Рё СѓРєР°Р·Р°РЅРЅРѕРµ РЅР°РїСЂР°РІР»РµРЅРёРµ (РґРІРµСЂСЊ)
 bool Cell::isOpened(CellDirection direction) const {
 	bool direction_status = false;
 
@@ -107,7 +107,7 @@ bool Cell::isOpened(CellDirection direction) const {
 	return direction_status;
 }
 
-// Проверить посущена ли комната во время генерации
+// РџСЂРѕРІРµСЂРёС‚СЊ РїРѕСЃСѓС‰РµРЅР° Р»Рё РєРѕРјРЅР°С‚Р° РІРѕ РІСЂРµРјСЏ РіРµРЅРµСЂР°С†РёРё
 bool Cell::isVisited() const {
 	return north || east || south || west;
 }
@@ -116,7 +116,7 @@ Cell::~Cell() {
 	clearObjects();
 }
 
-// Закрыть/открыть указанное направление (дверь)
+// Р—Р°РєСЂС‹С‚СЊ/РѕС‚РєСЂС‹С‚СЊ СѓРєР°Р·Р°РЅРЅРѕРµ РЅР°РїСЂР°РІР»РµРЅРёРµ (РґРІРµСЂСЊ)
 void Cell::changeDirection(CellDirection direction, bool status) {
 	switch (direction) {
 		case CellDirection::NORTH: north = status; break;
@@ -126,15 +126,15 @@ void Cell::changeDirection(CellDirection direction, bool status) {
 	}
 }
 
-// Получить направление между двумя точками
+// РџРѕР»СѓС‡РёС‚СЊ РЅР°РїСЂР°РІР»РµРЅРёРµ РјРµР¶РґСѓ РґРІСѓРјСЏ С‚РѕС‡РєР°РјРё
 CellDirection getDirection(std::uint16_t x1, std::uint16_t y1,
 						   std::uint16_t x2, std::uint16_t y2) {
 	std::int32_t y_difference = y2 - y1;
 	std::int32_t x_difference = x2 - x1;
 
-	// Вычислить тангенс угла наклона
+	// Р’С‹С‡РёСЃР»РёС‚СЊ С‚Р°РЅРіРµРЅСЃ СѓРіР»Р° РЅР°РєР»РѕРЅР°
 	double angle = (std::atan2(y_difference, x_difference) + PI) / ANGLE_45;
-	// Перевод в область окружности
+	// РџРµСЂРµРІРѕРґ РІ РѕР±Р»Р°СЃС‚СЊ РѕРєСЂСѓР¶РЅРѕСЃС‚Рё
 	std::uint16_t direction = static_cast<std::uint16_t>(angle) % DIRECTIONS;
 
 	return static_cast<CellDirection>(direction);
