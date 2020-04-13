@@ -53,6 +53,7 @@ public:
 private:
 	static std::uint64_t inputCommandWithTime(std::uint32_t &command_num);
 	static std::string getCommandPrefix(GameCommand command, bool directions);
+	static std::string getObjectEdging(Object object);
 
 	void clearCommandsList();
 

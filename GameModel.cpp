@@ -1,6 +1,7 @@
 #include "GameModel.h"
 
 #include <cmath>
+#include <string>
 #include <array>
 
 static constexpr std::uint32_t ROOMS_MIN = 2;
@@ -16,6 +17,9 @@ static constexpr double FOOD_PERCENT = 0.5;
 
 static constexpr double MONSTERS_PERCENT   = 0.1;
 static constexpr double DARK_ROOMS_PERCENT = 0.2;
+
+static constexpr double        GOLD_PERCENT		= 0.5;
+static constexpr std::uint16_t GOLD_PORTION_MAX = 100;
 
 void GameModel::initModel(std::uint32_t rooms_count) {
 	Pair maze_size = {1, 1};
@@ -71,12 +75,18 @@ void GameModel::initModel(std::uint32_t rooms_count) {
 		prev_dark_room = dark_room;
 	}
 
-	maze.pushCellObject(rand(0, maze_size.x - 1), rand(0, maze_size.x - 1), {"torchlight", ObjectType::TORCH});
-	maze.pushCellObject(rand(0, maze_size.x - 1), rand(0, maze_size.x - 1), {"sword",	   ObjectType::WEAPON});
+	maze.pushCellObject(rand(0, maze_size.x - 1), rand(0, maze_size.y - 1), {"torchlight", ObjectType::TORCH});
+	maze.pushCellObject(rand(0, maze_size.x - 1), rand(0, maze_size.y - 1), {"sword",	   ObjectType::WEAPON});
 
 	auto food_count = static_cast<std::uint32_t>(std::round(rooms_count * FOOD_PERCENT));
 	for (std::uint32_t i = 0; i != food_count; ++i)
-		maze.pushCellObject(rand(0, maze_size.x - 1), rand(0, maze_size.x - 1), {"fried chicken", ObjectType::FOOD});
+		maze.pushCellObject(rand(0, maze_size.x - 1), rand(0, maze_size.y - 1), {"fried chicken", ObjectType::FOOD});
+
+	auto gold_chunks_count = static_cast<std::uint32_t>(std::round(rooms_count * GOLD_PERCENT));
+	for (std::uint32_t i = 0; i != gold_chunks_count; ++i) {
+		auto gold_portion = rand(0, GOLD_PORTION_MAX - 1);
+		maze.pushCellObject(rand(0, maze_size.x - 1), rand(0, maze_size.y - 1), {std::to_string(gold_portion), ObjectType::GOLD});
+	}
 }
 
 void GameModel::addRoomObject(std::uint16_t x, std::uint16_t y, Object item) {
@@ -111,12 +121,16 @@ double GameModel::getHeroHealth() const {
 	return hero.getHealth();
 }
 
+void GameModel::setHeroItems(const std::vector<Object>& items) {
+	hero.setItems(items);
+}
+
 std::vector<Object> GameModel::getHeroItems() const {
 	return hero.getItems();
 }
 
 void GameModel::pickupHeroItem(Object item) {
-	hero.pickupItem(item);
+	item.type == ObjectType::GOLD ? pickupHeroGold(item) : hero.pickupItem(item);
 }
 
 Object GameModel::dropHeroItem(Object item) {
@@ -207,6 +221,23 @@ double GameModel::getHelthLosePercent() const {
 
 double GameModel::getHelthLiftPercent() const {
 	return HEALTH_LIFT_PERCENT;
+}
+
+void GameModel::pickupHeroGold(Object item) {
+	auto hero_items = hero.getItems();
+	auto found_gold = std::find_if(hero_items.begin(), hero_items.end(),
+								   [&](const Object& obj) { return item.type == obj.type; });
+
+	Object gold_sum = item;
+
+	if (found_gold != hero_items.end()) {
+		gold_sum = {std::to_string(std::stoi(item.name) +
+										  std::stoi(found_gold->name)), item.type};
+		hero_items.erase(found_gold);
+	}
+
+	hero_items.insert(hero_items.begin(), gold_sum);
+	hero.setItems(hero_items);
 }
 
 void GameModel::getMazeSize(std::uint32_t rooms_count, std::uint16_t &width, std::uint16_t &height) {

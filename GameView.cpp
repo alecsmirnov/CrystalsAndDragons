@@ -103,6 +103,7 @@ void GameView::update() {
 					case ObjectType::WEAPON:
 					case ObjectType::ITEM:
 					case ObjectType::TORCH:
+					case ObjectType::GOLD: 
 					case ObjectType::KEY:  operations_list.push_back({GameCommand::DROP, item}); break;
 					case ObjectType::FOOD: operations_list.push_back({GameCommand::EAT,  item});
 										   operations_list.push_back({GameCommand::DROP, item}); break;
@@ -114,6 +115,7 @@ void GameView::update() {
 					case ObjectType::TORCH: room_torch = true;
 					case ObjectType::ITEM:
 					case ObjectType::WEAPON:
+					case ObjectType::GOLD:
 					case ObjectType::KEY:   operations_list.push_back({GameCommand::GET,  obj}); items_exist = true; break;
 					case ObjectType::CHEST: operations_list.push_back({GameCommand::OPEN, obj}); items_exist = true; break;
 					case ObjectType::FOOD:  operations_list.push_back({GameCommand::EAT,  obj});
@@ -123,7 +125,7 @@ void GameView::update() {
 
 		for (auto obj : room_objects)
 			if (obj.type == ObjectType::MONSTER) {
-				std::cout << "There is an evil " << obj.name << " in the room!" << std::endl;
+				std::cout << "There is an evil " << getObjectEdging(obj) << " in the room!" << std::endl;
 
 				threat = true;
 			}
@@ -133,7 +135,7 @@ void GameView::update() {
 
 			for (auto op : operations_list)
 				if (op.command == GameCommand::DROP)
-					std::cout << " - " << op.object.name << std::endl;
+					std::cout << " - " << getObjectEdging(op.object) << std::endl;
 		}
 
 		if (items_exist) {
@@ -141,7 +143,7 @@ void GameView::update() {
 
 			for (auto op : operations_list)
 				if (op.command == GameCommand::GET || op.command == GameCommand::OPEN)
-					std::cout << " - " << op.object.name << std::endl;
+					std::cout << " - " << getObjectEdging(op.object) << std::endl;
 		}
 	}
 
@@ -154,7 +156,7 @@ void GameView::update() {
 		std::string command_prefix = getCommandPrefix(operations_list[i].command, false);
 
 		std::cout << " " << i + 1 << " - " << command_prefix << (command_prefix.empty() ? "" : " ");
-		std::cout << operations_list[i].object.name << std::endl;
+		std::cout << getObjectEdging(operations_list[i].object) << std::endl;
 	}
 
 	std::cout << std::endl;
@@ -289,6 +291,17 @@ std::string GameView::getCommandPrefix(GameCommand command, bool directions) {
 	}
 
 	return command_prefix;
+}
+
+std::string GameView::getObjectEdging(Object object) {
+	std::string edging_beg = "";
+	std::string edging_end = "";
+	if (object.type == ObjectType::GOLD) {
+		edging_beg = "gold (";
+		edging_end = " coins)";
+	}
+
+	return edging_beg + object.name + edging_end;
 }
 
 void GameView::clearCommandsList() {

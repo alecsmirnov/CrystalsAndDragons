@@ -12,6 +12,7 @@ enum class ObjectType {
 	FOOD,
 	MONSTER,
 	DIRECTION,
+	GOLD,
 	NONE,
 	EMPTY
 };

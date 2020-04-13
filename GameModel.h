@@ -26,6 +26,7 @@ public:
 	void setHeroHealth(double health);
 	double getHeroHealth() const;
 
+	void setHeroItems(const std::vector<Object> &items);
 	std::vector<Object> getHeroItems() const;
 	void pickupHeroItem(Object item);
 	Object dropHeroItem(Object item);
@@ -60,6 +61,7 @@ public:
 	double getHelthLiftPercent() const;
 
 private:
+	void pickupHeroGold(Object item);
 	static void getMazeSize(std::uint32_t rooms_count, std::uint16_t &width, std::uint16_t &height);
 
 private:

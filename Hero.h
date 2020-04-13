@@ -24,6 +24,7 @@ public:
 	void pickupItem(Object item);
 	Object dropItem(Object item);
 
+	void setItems(const std::vector<Object>& items);
 	std::vector<Object> getItems() const;
 	void clearInventory();
 

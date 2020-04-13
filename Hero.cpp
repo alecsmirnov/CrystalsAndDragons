@@ -50,6 +50,10 @@ Object Hero::dropItem(Object item) {
 	return drop_item;
 }
 
+void Hero::setItems(const std::vector<Object>& items) {
+	this->items = items;
+}
+
 std::vector<Object> Hero::getItems() const {
 	return items;
 }
