@@ -23,8 +23,8 @@ public:
 	void setHeroY(std::uint16_t y);
 	std::uint16_t getHeroY() const;
 
-	void setHeroHealth(std::uint32_t health);
-	std::uint32_t getHeroHealth() const;
+	void setHeroHealth(double health);
+	double getHeroHealth() const;
 
 	std::vector<Object> getHeroItems() const;
 	void pickupHeroItem(Object item);
@@ -43,16 +43,21 @@ public:
 
 	CellDirection getPreviosRoom() const;
 
-	void setKeyPosition(std::uint16_t x, std::uint16_t y);
 	std::uint16_t getKeyX() const;
 	std::uint16_t getKeyY() const;
 
-	void setChestPosition(std::uint16_t x, std::uint16_t y);
 	std::uint16_t getChestX() const;
 	std::uint16_t getChestY() const;
 
 	std::uint16_t getMazeWidth() const;
 	std::uint16_t getMazeHeight() const;
+
+	std::uint32_t getRoomsMin() const;
+	std::uint64_t getWaitTime() const;
+
+	double getHelthPenalty() const;
+	double getHelthLosePercent() const;
+	double getHelthLiftPercent() const;
 
 private:
 	static void getMazeSize(std::uint32_t rooms_count, std::uint16_t &width, std::uint16_t &height);

@@ -3,11 +3,19 @@
 #include <cmath>
 #include <array>
 
-static constexpr double HEALTH_INIT_PERCENT = 2.8;
-static constexpr double FOOD_PERCENT        = 0.5;
+static constexpr std::uint32_t ROOMS_MIN = 2;
 
-static constexpr double MONSTERS_PERCENT    = 0.1;
-static constexpr double DARK_ROOMS_PERCENT  = 0.2;
+static constexpr std::uint64_t WAIT_TIME_SEC = 5;
+
+static constexpr double HEALTH_INIT_PERCENT = 2.8;
+static constexpr double HEALTH_PENALTY		= 1;
+static constexpr double HEALTH_LOSE_PERCENT = 0.1;
+static constexpr double HEALTH_LIFT_PERCENT = 1.1;
+
+static constexpr double FOOD_PERCENT = 0.5;
+
+static constexpr double MONSTERS_PERCENT   = 0.1;
+static constexpr double DARK_ROOMS_PERCENT = 0.2;
 
 void GameModel::initModel(std::uint32_t rooms_count) {
 	Pair maze_size = {1, 1};
@@ -20,7 +28,7 @@ void GameModel::initModel(std::uint32_t rooms_count) {
 	hero.setX(hero_pos.x);
 	hero.setY(hero_pos.y);
 
-	auto hero_init_health = static_cast<std::uint32_t>(std::round(rooms_count * HEALTH_INIT_PERCENT));
+	auto hero_init_health = std::round(rooms_count * HEALTH_INIT_PERCENT);
 	hero.setHelth(hero_init_health);
 
 	Pair key_pos = {0, 0};
@@ -28,7 +36,8 @@ void GameModel::initModel(std::uint32_t rooms_count) {
 		key_pos = {rand(0, maze_size.x - 1), rand(0, maze_size.y - 1)};
 	} while (key_pos.x == hero_pos.x && key_pos.y == hero_pos.y);
 
-	setKeyPosition(key_pos.x, key_pos.y);			// Нужно только для карты
+
+	key_position = key_pos;
 	maze.pushCellObject(key_pos.x, key_pos.y, {"key", ObjectType::KEY});
 
 	Pair chest_pos = {0, 0};
@@ -36,7 +45,7 @@ void GameModel::initModel(std::uint32_t rooms_count) {
 		chest_pos = {rand(0, maze_size.x - 1), rand(0, maze_size.y - 1)};
 	} while (chest_pos.x == key_pos.x && chest_pos.y == key_pos.y);
 
-	setChestPosition(chest_pos.x, chest_pos.y);		// Нужно только для карты
+	chest_position = chest_pos;
 	maze.pushCellObject(chest_pos.x, chest_pos.y, {"chest", ObjectType::CHEST});
 
 	auto monsters_count = static_cast<std::uint32_t>(std::round(rooms_count * MONSTERS_PERCENT));
@@ -94,11 +103,11 @@ std::uint16_t GameModel::getHeroY() const {
 	return hero.getY();
 }
 
-void GameModel::setHeroHealth(std::uint32_t health) {
+void GameModel::setHeroHealth(double health) {
 	hero.setHelth(health);
 }
 
-std::uint32_t GameModel::getHeroHealth() const {
+double GameModel::getHeroHealth() const {
 	return hero.getHealth();
 }
 
@@ -156,20 +165,12 @@ CellDirection GameModel::getPreviosRoom() const {
 	return previos_room;
 }
 
-void GameModel::setKeyPosition(std::uint16_t x, std::uint16_t y) {
-	key_position = {x, y};
-}
-
 std::uint16_t GameModel::getKeyX() const {
 	return key_position.x;
 }
 
 std::uint16_t GameModel::getKeyY() const {
 	return key_position.y;
-}
-
-void GameModel::setChestPosition(std::uint16_t x, std::uint16_t y) {
-	chest_position = {x, y};
 }
 
 std::uint16_t GameModel::getChestX() const {
@@ -186,6 +187,26 @@ std::uint16_t GameModel::getMazeWidth() const {
 
 std::uint16_t GameModel::getMazeHeight() const {
 	return maze.getHeight();
+}
+
+std::uint32_t GameModel::getRoomsMin() const {
+	return ROOMS_MIN;
+}
+
+std::uint64_t GameModel::getWaitTime() const {
+	return WAIT_TIME_SEC;
+}
+
+double GameModel::getHelthPenalty() const {
+	return HEALTH_PENALTY;
+}
+
+double GameModel::getHelthLosePercent() const {
+	return HEALTH_LOSE_PERCENT;
+}
+
+double GameModel::getHelthLiftPercent() const {
+	return HEALTH_LIFT_PERCENT;
 }
 
 void GameModel::getMazeSize(std::uint32_t rooms_count, std::uint16_t &width, std::uint16_t &height) {

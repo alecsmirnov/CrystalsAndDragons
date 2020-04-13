@@ -31,6 +31,7 @@ public:
 
 	void update();
 
+	void displayRoomsCountWarnig() const;
 	void displayCommandWarnig() const;
 	void displayClosedChest() const;
 	void displayWin() const;

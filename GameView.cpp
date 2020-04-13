@@ -13,8 +13,16 @@ GameView::GameView(GameModel* model) {
 }
 
 void GameView::initInput() {
+	auto rooms_min = model->getRoomsMin();
+
 	std::cout << "Enter the number of rooms:" << std::endl;
 	std::cin >> rooms_count;
+
+	while (rooms_count < rooms_min) {
+		displayRoomsCountWarnig();
+		std::cout << "Enter the number of rooms:" << std::endl;
+		std::cin >> rooms_count;
+	}
 }
 
 void GameView::input() {
@@ -152,6 +160,10 @@ void GameView::update() {
 	std::cout << std::endl;
 }
 
+void GameView::displayRoomsCountWarnig() const {
+	std::cout << "The number of rooms cannot be less than " << model->getRoomsMin() << "!" << std::endl << std::endl;
+}
+
 void GameView::displayCommandWarnig() const {
 	std::cout << "Wron command item!" << std::endl << std::endl;
 }
@@ -240,7 +252,7 @@ void GameView::displayMaze() const {
 
 	for (std::uint16_t j = 0; j != model->getMazeHeight(); ++j)
 		std::cout << WALL << WALL;
-	std::cout << WALL << std::endl;
+	std::cout << WALL << std::endl << std::endl;
 }
 
 GameView::~GameView() {

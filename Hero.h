@@ -10,7 +10,7 @@
 class Hero {
 public:
 	Hero();
-	Hero(std::uint16_t x, std::uint16_t y, std::uint32_t health);
+	Hero(std::uint16_t x, std::uint16_t y, double health);
 
 	void setX(std::uint16_t x);
 	std::uint16_t getX() const;
@@ -18,8 +18,8 @@ public:
 	void setY(std::uint16_t y);
 	std::uint16_t getY() const;
 
-	void setHelth(std::uint32_t health);
-	std::uint32_t getHealth() const;
+	void setHelth(double health);
+	double getHealth() const;
 
 	void pickupItem(Object item);
 	Object dropItem(Object item);
@@ -33,7 +33,7 @@ private:
 	std::uint16_t x;
 	std::uint16_t y;
 
-	std::uint32_t health;
+	double health;
 
 	std::vector<Object> items;
 };

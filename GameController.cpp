@@ -2,12 +2,6 @@
 
 #include <cmath>
 
-static constexpr std::uint64_t WAIT_TIME_SEC = 5;
-
-static constexpr std::uint32_t HEALTH_PENALTY = 1;
-static constexpr double        LOSE_PERCENT   = 0.1;
-static constexpr double        GET_PERCENT    = 0.1;
-
 GameController::GameController(GameModel* model, GameView* view) {
 	this->model = model;
 	this->view = view;
@@ -26,13 +20,13 @@ void GameController::start() {
 		view->input();
 
 		operation = view->getOperation();
-		bool threat = view->getThreatStatus();
+		auto threat = view->getThreatStatus();
 
 		if (operation.command != GameCommand::EXIT && executed) {
 			if (!threat)
 				executeOperation(operation);
 			else 
-				if (WAIT_TIME_SEC < view->getOperationTime())
+				if (model->getWaitTime() < view->getOperationTime())
 					knockBack();
 				else
 					checkRoll(operation);
@@ -68,7 +62,7 @@ void GameController::executeOperation(GameOperation operation) {
 void GameController::knockBack() {
 	view->displayFightLose();
 
-	auto health = static_cast<std::uint32_t>(std::round(model->getHeroHealth() * LOSE_PERCENT));
+	auto health = std::round(model->getHeroHealth() * model->getHelthLosePercent());
 
 	model->setHeroHealth(health);
 	moveToDirection(model->getPreviosRoom());
@@ -77,7 +71,7 @@ void GameController::knockBack() {
 void GameController::toDrow(GameOperation operation) {
 	view->displayFightDrow();
 
-	auto health = static_cast<std::uint32_t>(std::round(model->getHeroHealth() * LOSE_PERCENT));
+	auto health = std::round(model->getHeroHealth() * model->getHelthLosePercent());
 
 	model->setHeroHealth(health);
 	executeOperation(operation);
@@ -97,9 +91,9 @@ void GameController::moveToDirection(CellDirection direction) {
 		case CellDirection::WEST:  model->setHeroY(model->getHeroY() - 1); break;
 	}
 
-	auto health = model->getHeroHealth() - HEALTH_PENALTY;
+	auto health = model->getHeroHealth() - model->getHelthPenalty();
 
-	if (health)
+	if (0 < health)
 		model->setHeroHealth(health);
 	else {
 		close();
@@ -123,7 +117,7 @@ void GameController::eatFood(Object food) {
 	auto used_food = model->dropHeroItem(food);
 	used_food = model->peekRoomObject(food);
 
-	auto health = static_cast<std::uint32_t>(std::round(model->getHeroHealth() * GET_PERCENT));
+	auto health = std::round(model->getHeroHealth() * model->getHelthLiftPercent());
 
 	model->setHeroHealth(health);
 }

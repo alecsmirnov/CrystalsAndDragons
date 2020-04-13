@@ -2,7 +2,7 @@
 
 Hero::Hero(): x(0), y(0), health(0) {}
 
-Hero::Hero(std::uint16_t x, std::uint16_t y, std::uint32_t health) {
+Hero::Hero(std::uint16_t x, std::uint16_t y, double health) {
 	this->x = x;
 	this->y = y;
 
@@ -25,11 +25,11 @@ std::uint16_t Hero::getY() const {
 	return y;
 }
 
-void Hero::setHelth(std::uint32_t health) {
+void Hero::setHelth(double health) {
 	this->health = health;
 }
 
-std::uint32_t Hero::getHealth() const {
+double Hero::getHealth() const {
 	return health;
 }
 
