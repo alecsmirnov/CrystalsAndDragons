@@ -10,12 +10,12 @@ static constexpr std::uint64_t WAIT_TIME_SEC = 5;
 
 static constexpr double HEALTH_INIT_PERCENT = 2.8;
 static constexpr double HEALTH_PENALTY		= 1;
-static constexpr double HEALTH_LOSE_PERCENT = 0.1;
+static constexpr double HEALTH_LOSE_PERCENT = 0.9;
 static constexpr double HEALTH_LIFT_PERCENT = 1.1;
 
 static constexpr double FOOD_PERCENT = 0.5;
 
-static constexpr double MONSTERS_PERCENT   = 0.1;
+static constexpr double MONSTERS_PERCENT   = 0.2;
 static constexpr double DARK_ROOMS_PERCENT = 0.2;
 
 static constexpr double        GOLD_PERCENT		= 0.5;

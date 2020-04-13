@@ -69,4 +69,16 @@ private:
 	GameModel* model;
 };
 
+static inline std::string redText(std::string text) {
+	return "\x1B[31m" + text + "\033[0m";
+}
+
+static inline std::string greenText(std::string text) {
+	return "\x1B[32m" + text + "\033[0m";
+}
+
+static inline std::string yellowText(std::string text) {
+	return "\x1B[33m" + text + "\033[0m";
+}
+
 #endif

@@ -189,13 +189,13 @@ void GameView::displayFightLose() const {
 void GameView::displayFightDrow() const {
 	auto prefix = getCommandPrefix(operation.command, true);
 
-	std::cout << "You " << prefix << " " << operation.object.name << " but lost your health!" << std::endl << std::endl;
+	std::cout << "You " << prefix << " " << getObjectEdging(operation.object) << " but lost your health!" << std::endl << std::endl;
 }
 
 void GameView::displayFightWin() const {
 	auto prefix = getCommandPrefix(operation.command, true);
 
-	std::cout << "You successfully " << prefix << " " << operation.object.name << "!" << std::endl << std::endl;
+	std::cout << "You successfully " << prefix << " " << getObjectEdging(operation.object) << "!" << std::endl << std::endl;
 }
 
 std::uint32_t GameView::getRoomsCount() const {
@@ -294,14 +294,15 @@ std::string GameView::getCommandPrefix(GameCommand command, bool directions) {
 }
 
 std::string GameView::getObjectEdging(Object object) {
-	std::string edging_beg = "";
-	std::string edging_end = "";
-	if (object.type == ObjectType::GOLD) {
-		edging_beg = "gold (";
-		edging_end = " coins)";
+	std::string result = object.name;
+
+	switch (object.type) {
+		case ObjectType::GOLD:	  result = yellowText("gold (" + object.name + " coins)"); break;
+		case ObjectType::MONSTER: result = redText(object.name);   break;
+		case ObjectType::FOOD:	  result = greenText(object.name); break;
 	}
 
-	return edging_beg + object.name + edging_end;
+	return result;
 }
 
 void GameView::clearCommandsList() {
